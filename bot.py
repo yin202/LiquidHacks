@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from riotwatcher import LolWatcher, ApiError
 import pandas as pd
-import re
 
 # Token from Discord Developer Website
 TOKEN = 'Nzc0NDY1NDUwMzM5MDc0MDc5.X6YLKA.CEd15xcXw7BrMxd0Ij6vX1MOIKE'
@@ -37,6 +36,7 @@ async def based(client, *message):
     embedVar.add_field(name="check_f2", value="Very Based", inline=False)
     await client.send(embed=embedVar)
 
+# Command for creating text box based on multiple inputs
 @client.command()
 async def suggest(client, *message):
     embedVar = discord.Embed(title="Suggestion", description="Work out fool", color=0x61ff33)
@@ -44,16 +44,13 @@ async def suggest(client, *message):
         embedVar.add_field(name=word, value=word, inline=False)
     await client.send(embed=embedVar)
 
-
 # Riot Shiet
 @client.command()
 async def work(client, *message):
     if (len(message) != 2):
         if (len(message) == 1):
-            print(message[0])
-            regionName = re.compile(
-                "(br1|eun1|euw1|la1|la2|na1|oce|oc1|ru1|tr1|jp1|kr|pbe)")
-            if(re.match(message[0], regionName)):
+            regionName = ['br1', 'eun1', 'euw1', 'la1', 'la2', 'na1', 'oce', 'oc1', 'ru1', 'tr1', 'jp1', 'kr', 'pbe']
+            if message[0].lower() in regionName:
                 await client.send("Include a summoner name.")
             else:
                 await client.send("Include a region.")
@@ -61,6 +58,7 @@ async def work(client, *message):
             await client.send("Enter one region and one summoner name.")
         return
 
+    await client.send("Processing info :thinking:...")
     buildMatchList(message[0], message[1])   # Builds match tables for last 7 matches
     await client.send(buildMatchList(message[0], message[1])[0])    # Sends the first match table to the client
 
@@ -90,14 +88,17 @@ async def champLookup(client, *message):
     embedVar.add_field(name="Champion ID", value=message, inline=False)
     await client.send(embed=embedVar)
 
+
 @client.command()
 async def testBML(client, *message):
     await client.send(buildMatchList('sorairo', 'na1')[1])
 
+
 def champLookupInternal(id):
     lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
     latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
-    static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
+    static_champ_list = lol_watcher.data_dragon.champions(
+        latest, False, 'en_US')
     champ_dict = {}
     for key in static_champ_list['data']:
         row = static_champ_list['data'][key]
@@ -105,19 +106,22 @@ def champLookupInternal(id):
     champName = champ_dict[str(id)]
     return champName
 
-def buildMatchList(username, user_region):
+
+def buildMatchList(user_region, username):
     lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
 
     user = lol_watcher.summoner.by_name(user_region, username)
 
-    match_list = lol_watcher.match.matchlist_by_account(user_region, user['accountId'])
+    match_list = lol_watcher.match.matchlist_by_account(
+        user_region, user['accountId'])
 
     listOfMatches = []
     listOfMatchesDict = []
 
     for i in range(0, 7):
         tempMatch = match_list['matches'][i]
-        match_details = lol_watcher.match.by_id(user_region, tempMatch['gameId'])
+        match_details = lol_watcher.match.by_id(
+            user_region, tempMatch['gameId'])
         participants = []
         for row in match_details['participants']:
             participants_row = {}
@@ -134,7 +138,8 @@ def buildMatchList(username, user_region):
             participants_row['totalMinionsKilled'] = row['stats']['totalMinionsKilled']
             participants_row['item0'] = row['stats']['item0']
             participants_row['item1'] = row['stats']['item1']
-            participants_row['championName'] = champLookupInternal(row['championId'])
+            participants_row['championName'] = champLookupInternal(
+                row['championId'])
             participants.append(participants_row)
         df = pd.DataFrame(participants)
         listOfMatchesDict.append(participants)
