@@ -51,7 +51,7 @@ async def work(client, *message):
 
     region = 'na1'
 
-    me = lol_watcher.summoner.by_name(region, 'sorairo')
+    me = lol_watcher.summoner.by_name(region, message[0])
     print(me)
     ranked_stats = lol_watcher.league.by_summoner(region, me['id'])
     print(ranked_stats)
