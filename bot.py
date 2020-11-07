@@ -28,13 +28,12 @@ async def echo(client, *message):
 
 # Command to display text box
 @client.event
-async def on_message(message):
-    if message.content.startswith('!based'):
-        embedVar = discord.Embed(
-            title="BASED", description="based_test", color=0x61ff33)
-        embedVar.add_field(name="check_f1", value="Yes", inline=False)
-        embedVar.add_field(name="check_f2", value="Very Based", inline=False)
-        await message.channel.send(embed=embedVar)
+async def based(message):
+    embedVar = discord.Embed(
+        title="BASED", description="based_test", color=0x61ff33)
+    embedVar.add_field(name="check_f1", value="Yes", inline=False)
+    embedVar.add_field(name="check_f2", value="Very Based", inline=False)
+    await message.channel.send(embed=embedVar)
 
 # Text box with multiple input text
 @client.command
