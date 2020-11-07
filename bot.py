@@ -25,10 +25,9 @@ async def echo(client, *message):
         output += ' '
     await client.send('Echo: {}'.format(output))
 
-
 # Command to display text box
 @client.command
-async def based(message):
+async def based(client, *message):
     embedVar = discord.Embed(
         title="BASED", description="based_test", color=0x61ff33)
     embedVar.add_field(name="check_f1", value="Yes", inline=False)
