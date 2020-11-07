@@ -2,37 +2,24 @@ import discord
 from discord.ext import commands
 from riotwatcher import LolWatcher, ApiError
 import pandas as pd
+import random
+
 
 # Token from Discord Developer Website
 TOKEN = 'Nzc0NDY1NDUwMzM5MDc0MDc5.X6YLKA.CEd15xcXw7BrMxd0Ij6vX1MOIKE'
-lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
-static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
-champ_dict = {}
-for key in static_champ_list['data']:
-    row = static_champ_list['data'][key]
-    champ_dict[row['key']] = row['id']
-
 client = commands.Bot(command_prefix = "!")
-
 # Determines if bot is active or not
 @client.event
 async def on_ready():
     print('LoL Workout Bot is ready!')
 
-# Simple command to check number of arguments passed
-@client.command()
-async def numArgs(client, *arg):
-    await client.send('Passed {} number of arguments.'.format(len(arg)))
 
-# Simple command to echo a message
-@client.command()
-async def echo(client, *message):
-    output = ''
-    for word in message:
-        output += word
-        output += ' '
-    await client.send('Echo: {}'.format(output))
+# List of exercises
+listExercises = ["squats", "lunges", "high_knees", "plank_rotations", "plank_hold", "wall_sit", 
+        "jumping_jacks", "ab_crunches", "pushups", "elbow_planks", "leg_raises", "superman_stretches", 
+        "burpees", "jump_squats", "bicycle_crunches", "mountain_climbers", "rest", "run", "flutter_kicks", 
+        "box_jumps", "wrist_workout"]
+
 
 # Command to display simple BASED text box
 @client.command()
@@ -43,6 +30,7 @@ async def based(client, *message):
     embedVar.add_field(name="check_f2", value="Very Based", inline=False)
     await client.send(embed=embedVar)
 
+
 # Command for creating text box based on multiple inputs
 @client.command()
 async def suggest(client, *message):
@@ -51,12 +39,14 @@ async def suggest(client, *message):
         embedVar.add_field(name=word, value=word, inline=False)
     await client.send(embed=embedVar)
 
-# Riot Shiet
+
+# Information on the last match
 @client.command()
 async def work(client, *message):
-    if (len(message) != 2):
+    if (len(message) < 2):
         if (len(message) == 1):
-            regionName = ['br1', 'eun1', 'euw1', 'la1', 'la2', 'na1', 'oce', 'oc1', 'ru1', 'tr1', 'jp1', 'kr', 'pbe']
+            regionName = ['br1', 'eun1', 'euw1', 'la1', 'la2',
+                          'na1', 'oce', 'oc1', 'ru1', 'tr1', 'jp1', 'kr', 'pbe']
             if message[0].lower() in regionName:
                 await client.send("Include a summoner name.")
             else:
@@ -64,22 +54,21 @@ async def work(client, *message):
         else:
             await client.send("Enter one region and one summoner name.")
         return
-
     await client.send("Processing info :thinking:...")
     buildMatchList(message[0], message[1])   # Builds match tables for last 7 matches
     await client.send(buildMatchList(message[0], message[1])[0])    # Sends the first match table to the client
-
-    #champs = df.loc[:, "champion"]
-    #embedVar = discord.Embed(
-    #    title="Champions", description="Player Champions", color=0x61ff33)
-    #for i in champs:
-    #    embedVar.add_field(name=i, value=i, inline=False)
-    #await client.send(embed=embedVar)
 
 
 # Champ Lookup command
 @client.command()
 async def champLookup(client, *message):
+    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
+    latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
+    static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
+    champ_dict = {}
+    for key in static_champ_list['data']:
+        row = static_champ_list['data'][key]
+        champ_dict[row['key']] = row['id']
     champName = champ_dict[message[0]]
     print(champ_dict)
     embedVar = discord.Embed(
@@ -89,17 +78,39 @@ async def champLookup(client, *message):
     await client.send(embed=embedVar)
 
 
+# DM the author to give help
+@client.command()
+async def dm(ctx):
+    await ctx.author.send("Hello")
+
+
+# Test command
 @client.command()
 async def testBML(client, *message):
     await client.send(buildMatchList('sorairo', 'na1')[1])
 
 
+###################################################################################################
+# 
+# RIOT API Helper Functions
+#
+###################################################################################################
 def champLookupInternal(id):
+    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
+    latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
+    static_champ_list = lol_watcher.data_dragon.champions(
+        latest, False, 'en_US')
+    champ_dict = {}
+    for key in static_champ_list['data']:
+        row = static_champ_list['data'][key]
+        champ_dict[row['key']] = row['id']
     champName = champ_dict[str(id)]
     return champName
 
 
 def buildMatchList(user_region, username):
+    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
+
     user = lol_watcher.summoner.by_name(user_region, username)
 
     match_list = lol_watcher.match.matchlist_by_account(
@@ -136,7 +147,6 @@ def buildMatchList(user_region, username):
         listOfMatches.append(df)
 
     return listOfMatches
-
 
 
 
