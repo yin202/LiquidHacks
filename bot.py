@@ -12,15 +12,11 @@ async def on_ready():
     print('LoL Workout Bot is ready!')
 
 # Simple command to check number of arguments passed
-
-
 @client.command()
 async def numArgs(client, *arg):
     await client.send('Passed {} number of arguments.'.format(len(arg)))
 
 # Simple command to echo a message
-
-
 @client.command()
 async def echo(client, *message):
     output = ''
