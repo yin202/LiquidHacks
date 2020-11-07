@@ -26,22 +26,19 @@ async def echo(client, *message):
     await client.send('Echo: {}'.format(output))
 
 # Command to display text box
-@client.command
-async def based(client, *message):
-    embedVar = discord.Embed(
-        title="BASED", description="based_test", color=0x61ff33)
-    embedVar.add_field(name="check_f1", value="Yes", inline=False)
-    embedVar.add_field(name="check_f2", value="Very Based", inline=False)
-    await message.channel.send(embed=embedVar)
-
-# Text box with multiple input text
-@client.command
-async def suggest(client, *message):
-    embedVar = discord.Embed(
-        title="Suggested Workout", description="What you should do", color=0x61ff33)
-    for word in message:
-        embedVar.add_field(name=word, value="Do this", inline=False)
-    await client.send(embed=embedVar)
+@client.event
+async def on_message(message):
+    if message.content.startswith('!based'):
+        embedVar = discord.Embed(
+            title="BASED", description="based_test", color=0x61ff33)
+        embedVar.add_field(name="check_f1", value="Yes", inline=False)
+        embedVar.add_field(name="check_f2", value="Very Based", inline=False)
+        await message.channel.send(embed=embedVar)
+    if message.content.startswith('!suggest'):
+        embedVar = discord.Embed(
+            title="Suggested Workout", description="What you should do", color=0x61ff33)
+        embedVar.add_field(name="check_f1", value=message, inline=False)
+        await message.channel.send(embed=embedVar)
 
 
 client.run(TOKEN)
