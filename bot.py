@@ -36,6 +36,14 @@ async def based(client, *message):
     embedVar.add_field(name="check_f2", value="Very Based", inline=False)
     await client.send(embed=embedVar)
 
+@client.command()
+async def suggest(client, *message):
+    embedVar = discord.Embed(title="Suggestion", description="Work out fool", color=0x61ff33)
+    for word in message:
+        embedVar.add_field(name=word, value=word, inline=False)
+    await client.send(embed=embedVar)
+
+
 # Riot Shiet
 @client.command()
 async def work(client, *message):
