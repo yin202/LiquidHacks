@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from riotwatcher import LolWatcher, ApiError
 import pandas as pd
+import re
 
 # Token from Discord Developer Website
 TOKEN = 'Nzc0NDY1NDUwMzM5MDc0MDc5.X6YLKA.CEd15xcXw7BrMxd0Ij6vX1MOIKE'
@@ -47,14 +48,24 @@ async def suggest(client, *message):
 # Riot Shiet
 @client.command()
 async def work(client, *message):
+    if (len(message) != 2):
+        if (len(message) == 1):
+            print(message[0])
+            regionName = re.compile(
+                "(br1|eun1|euw1|la1|la2|na1|oce|oc1|ru1|tr1|jp1|kr|pbe)")
+            if(re.match(message[0], regionName)):
+                await client.send("Include a summoner name.")
+            else:
+                await client.send("Include a region.")
+        else:
+            await client.send("Enter one region and one summoner name.")
+        return
+           
+
     lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-
-    region = 'na1'
-
-    me = lol_watcher.summoner.by_name(region, message[0])
-    print(me)
+    region = message[0]
+    me = lol_watcher.summoner.by_name(region, message[1])
     ranked_stats = lol_watcher.league.by_summoner(region, me['id'])
-    print(ranked_stats)
 
     match_list = lol_watcher.match.matchlist_by_account(region, me['accountId'])
     entr = []
@@ -71,6 +82,7 @@ async def work(client, *message):
         entr.append(entr_row)
 
     df = pd.DataFrame(entr)
+    # await client.send(df)
 
     champs = df.loc[:, "champion"]
     embedVar = discord.Embed(
@@ -79,6 +91,6 @@ async def work(client, *message):
         embedVar.add_field(name=i, value=i, inline=False)
     await client.send(embed=embedVar)
 
-    await client.send(df)
+
 
 client.run(TOKEN)
