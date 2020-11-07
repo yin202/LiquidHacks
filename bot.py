@@ -71,6 +71,14 @@ async def work(client, *message):
         entr.append(entr_row)
 
     df = pd.DataFrame(entr)
+
+    champs = df.loc[:, "champion"]
+    embedVar = discord.Embed(
+        title="Champions", description="Player Champions", color=0x61ff33)
+    for i in champs:
+        embedVar.add_field(name=i, value=i, inline=False)
+    await client.send(embed=embedVar)
+
     await client.send(df)
 
 client.run(TOKEN)
