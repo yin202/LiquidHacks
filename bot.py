@@ -1,5 +1,7 @@
 import discord
 from discord.ext import commands
+from riotwatcher import LolWatcher, ApiError
+import pandas as pd
 
 # Token from Discord Developer Website
 TOKEN = 'Nzc0NDY1NDUwMzM5MDc0MDc5.X6YLKA.CEd15xcXw7BrMxd0Ij6vX1MOIKE'
@@ -40,5 +42,33 @@ async def on_message(message):
         embedVar.add_field(name="check_f1", value=message, inline=False)
         await message.channel.send(embed=embedVar)
 
+# Riot Shiet
+@client.command
+async def work(client, *message):
+    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
+
+    region = 'na1'
+
+    me = lol_watcher.summoner.by_name(region, 'sorairo')
+    print(me)
+    ranked_stats = lol_watcher.league.by_summoner(region, me['id'])
+    print(ranked_stats)
+
+    match_list = lol_watcher.match.matchlist_by_account(region, me['accountId'])
+    entr = []
+    for i in range (0,7):
+        entr_row = {}
+        entr_row['platformId'] = match_list['matches'][i]['platformId']
+        entr_row['gameId'] = match_list['matches'][i]['gameId']
+        entr_row['champion'] = match_list['matches'][i]['champion']
+        entr_row['queue'] = match_list['matches'][i]['queue']
+        entr_row['season'] = match_list['matches'][i]['season']
+        entr_row['timestamp'] = match_list['matches'][i]['timestamp']
+        entr_row['role'] = match_list['matches'][i]['role']
+        entr_row['lane'] = match_list['matches'][i]['lane']
+        entr.append(entr_row)
+
+    df = pd.DataFrame(entr)
+    await client.send(df)
 
 client.run(TOKEN)
