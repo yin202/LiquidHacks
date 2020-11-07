@@ -5,6 +5,13 @@ import pandas as pd
 
 # Token from Discord Developer Website
 TOKEN = 'Nzc0NDY1NDUwMzM5MDc0MDc5.X6YLKA.CEd15xcXw7BrMxd0Ij6vX1MOIKE'
+lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
+latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
+static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
+champ_dict = {}
+for key in static_champ_list['data']:
+    row = static_champ_list['data'][key]
+    champ_dict[row['key']] = row['id']
 
 client = commands.Bot(command_prefix = "!")
 
@@ -73,13 +80,6 @@ async def work(client, *message):
 # Champ Lookup command
 @client.command()
 async def champLookup(client, *message):
-    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-    latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
-    static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
-    champ_dict = {}
-    for key in static_champ_list['data']:
-        row = static_champ_list['data'][key]
-        champ_dict[row['key']] = row['id']
     champName = champ_dict[message[0]]
     print(champ_dict)
     embedVar = discord.Embed(
@@ -95,21 +95,11 @@ async def testBML(client, *message):
 
 
 def champLookupInternal(id):
-    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-    latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
-    static_champ_list = lol_watcher.data_dragon.champions(
-        latest, False, 'en_US')
-    champ_dict = {}
-    for key in static_champ_list['data']:
-        row = static_champ_list['data'][key]
-        champ_dict[row['key']] = row['id']
     champName = champ_dict[str(id)]
     return champName
 
 
 def buildMatchList(user_region, username):
-    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-
     user = lol_watcher.summoner.by_name(user_region, username)
 
     match_list = lol_watcher.match.matchlist_by_account(
