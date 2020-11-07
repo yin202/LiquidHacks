@@ -27,7 +27,7 @@ async def echo(client, *message):
 
 
 # Command to display text box
-@client.event
+@client.command
 async def based(message):
     embedVar = discord.Embed(
         title="BASED", description="based_test", color=0x61ff33)
