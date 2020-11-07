@@ -27,23 +27,17 @@ async def echo(client, *message):
         output += ' '
     await client.send('Echo: {}'.format(output))
 
-# Command to display text box
-@client.event
-async def on_message(message):
-    if message.content.startswith('!based'):
-        embedVar = discord.Embed(
-            title="BASED", description="based_test", color=0x61ff33)
-        embedVar.add_field(name="check_f1", value="Yes", inline=False)
-        embedVar.add_field(name="check_f2", value="Very Based", inline=False)
-        await message.channel.send(embed=embedVar)
-    if message.content.startswith('!suggest'):
-        embedVar = discord.Embed(
-            title="Suggested Workout", description="What you should do", color=0x61ff33)
-        embedVar.add_field(name="check_f1", value=message, inline=False)
-        await message.channel.send(embed=embedVar)
+# Command to display simple BASED text box
+@client.command()
+async def based(client, *message):
+    embedVar = discord.Embed(
+        title="BASED", description="based_test", color=0x61ff33)
+    embedVar.add_field(name="check_f1", value="Yes", inline=False)
+    embedVar.add_field(name="check_f2", value="Very Based", inline=False)
+    await client.send(embed=embedVar)
 
 # Riot Shiet
-@client.command
+@client.command()
 async def work(client, *message):
     lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
 
