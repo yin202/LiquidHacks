@@ -68,6 +68,7 @@ async def work(client, *message):
         return
     await client.send("Processing info :thinking:...")
     buildMatchList(message[0], message[1])   # Builds match tables for last 7 matches
+    # await firstGameStats(client, *message)
     await client.send(buildMatchList(message[0], message[1])[0])    # Sends the first match table to the client
 
 
@@ -83,27 +84,6 @@ async def champLookup(client, *message):
     await client.send(embed=embedVar)
 
 
-# get stats for first game
-@client.command()
-async def firstGameStats(client, *message):
-    embedVar = discord.Embed(
-        title="Stats", description="Last Game's Stats", color=0x61ff33)
-    embedVar.add_field(name="Summoner ID", value=userStats['userName'], inline=False)
-    embedVar.add_field(name="Champion", value=userStats['Champion'], inline=False)
-    embedVar.add_field(name="Kills", value=userStats['Kills'], inline=False)
-    embedVar.add_field(name="Deaths", value=userStats['Deaths'], inline=False)
-    embedVar.add_field(name="Assists", value=userStats['Assists'], inline=False)
-    embedVar.add_field(name="Enemy Team Kills", value=userStats['eTeamKills'], inline=False)
-    embedVar.add_field(name="Role", value=userStats['role'], inline=False)
-    embedVar.add_field(name="Game Length (minutes)", value=userStats['gameLength'], inline=False)
-    embedVar.add_field(name="CS/M", value=userStats['CSM'], inline=False)
-    embedVar.add_field(name="Win?", value=userStats['Win'], inline=False)
-    embedVar.add_field(name="Turrets Destroyed", value=userStats['turretsDestroyed'], inline=False)
-    embedVar.add_field(name="First Baron?", value=userStats['firstBaron'], inline=False)
-    embedVar.add_field(name="First Dragon?", value=userStats['firstDragon'], inline=False)
-    await client.send(embed=embedVar)
-
-
 # DM the author to give help
 @client.command()
 async def dm(ctx):
@@ -114,6 +94,28 @@ async def dm(ctx):
 @client.command()
 async def testBML(client, *message):
     await client.send(buildMatchList('sorairo', 'na1')[1])
+
+# DO NOT REMOVE
+# get stats for first game
+# @client.command()
+# async def firstGameStats(client, *message):
+#     embedVar = discord.Embed(
+#         title="Stats", description="Last Game's Stats", color=0x61ff33)
+#     embedVar.add_field(name="Summoner ID", value=userStats[0]['userName'], inline=False)
+#     embedVar.add_field(name="Champion", value=userStats[0]['Champion'], inline=False)
+#     embedVar.add_field(name="Kills", value=userStats[0]['Kills'], inline=False)
+#     embedVar.add_field(name="Deaths", value=userStats[0]['Deaths'], inline=False)
+#     embedVar.add_field(name="Assists", value=userStats[0]['Assists'], inline=False)
+#     embedVar.add_field(name="Enemy Team Kills", value=userStats[0]['eTeamKills'], inline=False)
+#     embedVar.add_field(name="Role", value=userStats[0]['Role'], inline=False)
+#     embedVar.add_field(name="Game Length (minutes)", value=userStats[0]['gameLength'], inline=False)
+#     embedVar.add_field(name="CS/M", value=userStats[0]['CSM'], inline=False)
+#     embedVar.add_field(name="Win?", value=userStats[0]['Win'], inline=False)
+#     embedVar.add_field(name="Turrets Destroyed", value=userStats[0]['turretsDestroyed'], inline=False)
+#     embedVar.add_field(name="First Baron?", value=userStats[0]['firstBaron'], inline=False)
+#     embedVar.add_field(name="First Dragon?", value=userStats[0]['firstDragon'], inline=False)
+#     await client.send(embed=embedVar)
+
 
 
 ###################################################################################################
@@ -135,7 +137,6 @@ def buildMatchList(user_region, username):
     listOfMatches = []
     listOfMatchesDict = []
     userMatchIds = []
-
     for i in range(0, 7):
         tempMatch = match_list['matches'][i]
         userMatchIds.append(tempMatch['gameId'])
@@ -182,10 +183,8 @@ def getUsername(participantIdentities, participantId):
 
 
 def getStats(match, userName, participantId, teamId, champ):
-    statDesc = {}
     # Role
     role = match['participants'][participantId - 1]['timeline']['role']
-    print(role)
     # Enemy Team kills:
     enemyKills = 0
     if (participantId <= 5):
@@ -213,7 +212,6 @@ def getStats(match, userName, participantId, teamId, champ):
     csm = (match['participants'][participantId - 1]['stats']['totalMinionsKilled'] +
            match['participants'][participantId - 1]['stats']['neutralMinionsKilled']) / gameDuration
 
-    print(csm)
 
     # Win/Loss
     if (100 == teamId):
@@ -228,11 +226,9 @@ def getStats(match, userName, participantId, teamId, champ):
             userWon = False
         else:
             userWon = True
-    print(userWon)
 
     # Turrets that Player Destroyed
     turretsDestroyed = match['participants'][participantId - 1]['stats']['turretKills']
-    print(turretsDestroyed)
 
     # First Baron Status
     if (100 == teamId):
