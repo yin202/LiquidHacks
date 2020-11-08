@@ -27,7 +27,7 @@ async def info(client, *message):
                                              "based on your previous game performance in League of Legends. "
                                              "If you perform well in your game, the bot will give you a easier workout. If you don't, well then...."
                                              "you might think twice about feeding"
-                                             " your laner next time!", color=0x734f96 )
+                                             " your laner next time!", color=0xceb888)
     embedVar.add_field(name="Kevin", value="Sophomore @ Purdue University" +"\n" + "Kevin is Double majoring in Data Science and Statistics", inline=False)
     embedVar.add_field(name="James", value="Sophomore @ Columbia University" +"\n" + "James is Majoring in Computer/Electrical Engineering", inline=False)
     embedVar.add_field(name="Joseph", value="Sophomore @ Purdue University" +"\n" + "Joseph is Majoring in Computer Science", inline=False)
@@ -377,5 +377,13 @@ def getStats(match, userName, participantId, teamId, champ):
                 "firstDragon": firstDragon}
     return statDesc
 
+    # This is a kill command, used if we're doing web-hosting with amazon + stuff.
+    # Idk how, but we should make an admin channel that we can ONLY use this command in.
+    # In the meantime, this doesn't seem to work- it interferes with the bot, so we're keeping it contained like an SCP
+
+# @client.event
+# async def on_message(message):
+#    if message.content == 'kill':
+#        await client.logout()
 
 client.run(TOKEN)
