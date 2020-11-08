@@ -63,9 +63,20 @@ async def work(client, *message):
             await client.send("Enter one region and one summoner name.")
         return
     await client.send("Processing info :thinking:...")
-    x = buildMatchList(message[0], message[1])   # Builds match tables for last 7 matches
-    times = generateExerciseTimes(x)
-    types = generateExerciseType()
+    userName = ""
+    for i in range(1, len(message)-1):
+        userName = userName + message[i] + " "
+    userName = userName + message[len(message) - 1]
+    try:
+        x = buildMatchList(message[0], userName)   # Builds match tables for last 7 matches
+        times = generateExerciseTimes(x)
+        types = generateExerciseType()
+    except (IndexError):
+        embedVar = discord.Embed(
+            title="ERROR!", description="The summoner name does not exist or has not played a game!",
+            color=0xFF0000)
+        await client.send(embed=embedVar)
+
     embedVar = discord.Embed(
         title="Exercise Plan", description="A customized exercise plan based off of your performance last game", color=0x61ff33)
     embedVar.add_field(name="Summoner Name", value=x[0]['userName'], inline=False)
