@@ -16,13 +16,13 @@ client = commands.Bot(command_prefix = "!bb")
 async def on_ready():
     game = discord.Game("Type !bb for help")
     await client.change_presence(status=discord.Status.online, activity=game)
-    print('LoL Workout Bot is ready!')
+    print('Blue Buff is ready!')
 
 
 @client.command()
 async def info(client, *message):
     embedVar = discord.Embed(
-        title="LoL Workout - Information", description="This bot will create a "
+        title="Blue Buff - Information", description="This bot will create a "
                                              "personalized workout routine "
                                              "based on your previous game performance in League of Legends. "
                                              "If you perform well in your game, the bot will give you a easier workout. If you don't, well then...."
@@ -39,7 +39,7 @@ async def info(client, *message):
 @client.command()
 async def h(client, *message):
     embedVar = discord.Embed(
-        title="LoL Workout - Help", description="Commands", color=0x734f96)
+        title="Blue Buff - Help", description="Commands", color=0x734f96)
     embedVar.add_field(name="!bbcreate <region> <summoner name>",
                        value="Creates an exercise routine",
                        inline=False)
@@ -49,7 +49,7 @@ async def h(client, *message):
     embedVar.add_field(name="!bbcalc",
                        value="Displays formula and weighting used to generate workout",
                        inline=False)
-    embedVar.add_field(name="!bbhelp",
+    embedVar.add_field(name="!bbh",
                        value="Displays this page",
                        inline=False)
     await client.send(embed=embedVar)
@@ -58,7 +58,7 @@ async def h(client, *message):
 
 @client.command()
 async def calc(client, *message):
-    embedVar = discord.Embed(title="LoL Workout - Calculations", 
+    embedVar = discord.Embed(title="Blue Buff - Calculations", 
         description="How the number of repetitions is calculated.", color=0x734f96)
     embedVar.add_field(name="Initial Stats",
                       value="Winning, First Dragon, First Baron",
