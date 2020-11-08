@@ -3,6 +3,7 @@ from discord.ext import commands
 from riotwatcher import LolWatcher, ApiError
 import pandas as pd
 import random
+import os
 import asyncio
 
 
@@ -28,11 +29,13 @@ async def info(client, *message):
                                              "If you perform well in your game, the bot will give you a easier workout. If you don't, well then...."
                                              "you might think twice about feeding"
                                              " your laner next time!", color=0xceb888)
+    path = 'C:/Users/Kevin Tian/Desktop/BlueBuffEmbed.jpg'
+    file = discord.File(path, filename= "BlueBuffEmbed.jpg")
     embedVar.add_field(name="Kevin", value="Sophomore @ Purdue University" +"\n" + "Kevin is Double majoring in Data Science and Statistics", inline=False)
     embedVar.add_field(name="James", value="Sophomore @ Columbia University" +"\n" + "James is Majoring in Computer/Electrical Engineering", inline=False)
     embedVar.add_field(name="Joseph", value="Sophomore @ Purdue University" +"\n" + "Joseph is Majoring in Computer Science", inline=False)
     embedVar.add_field(name="Ahmed", value="Sophomore @ Purdue University" +"\n" + "Ahmed is Majoring in Computer Engineering", inline=False)
-    await client.send(embed=embedVar)
+    await client.send(file = file, embed=embedVar)
 
 
 # help command
@@ -70,7 +73,7 @@ async def calc(client, *message):
 
 
 #Champion List Loop (To help with runtime, don't move this pls yet)
-lol_watcher = LolWatcher('RGAPI-xxxxxxxxxxxxxxxxxxxxxx')
+lol_watcher = LolWatcher('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
 latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
 static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
 champ_dict = {}
