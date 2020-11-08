@@ -377,13 +377,5 @@ def getStats(match, userName, participantId, teamId, champ):
                 "firstDragon": firstDragon}
     return statDesc
 
-    # This is a kill command, used if we're doing web-hosting with amazon + stuff.
-    # Idk how, but we should make an admin channel that we can ONLY use this command in.
-    # In the meantime, this doesn't seem to work- it interferes with the bot, so we're keeping it contained like an SCP
-
-# @client.event
-# async def on_message(message):
-#    if message.content == 'kill':
-#        await client.logout()
 
 client.run(TOKEN)
