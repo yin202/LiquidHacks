@@ -15,7 +15,7 @@ client = commands.Bot(command_prefix = "!lw")
 @client.event
 async def on_ready():
     game = discord.Game("Type !lwh for help")
-    await client.change_presence(status=discord.Status.idle, activity=game)
+    await client.change_presence(status=discord.Status.online, activity=game)
     print('LoL Workout Bot is ready!')
 
 
