@@ -54,7 +54,6 @@ async def h(client, *message):
                        inline=False)
     await client.send(embed=embedVar)
 
-# help command
 
 
 @client.command()
@@ -71,7 +70,7 @@ async def calc(client, *message):
 
 
 #Champion List Loop (To help with runtime, don't move this pls yet)
-lol_watcher = LolWatcher('RGAPI-85ee1dfc-28d3-4608-8f55-0c07879d7fa3')
+lol_watcher = LolWatcher('RGAPI-16824ea5-e86b-4ce9-8dd3-bc61f3587f51')
 latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
 static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
 champ_dict = {}
@@ -79,25 +78,6 @@ for key in static_champ_list['data']:
     row = static_champ_list['data'][key]
     champ_dict[row['key']] = row['id']
 
-
-
-# Command to display simple BASED text box
-@client.command()
-async def based(client, *message):
-    embedVar = discord.Embed(
-        title="BASED", description="based_test", color=0x61ff33)
-    embedVar.add_field(name="check_f1", value="Yes", inline=False)
-    embedVar.add_field(name="check_f2", value="Very Based", inline=False)
-    await client.send(embed=embedVar)
-
-
-# Command for creating text box based on multiple inputs
-@client.command()
-async def suggest(client, *message):
-    embedVar = discord.Embed(title="Suggestion", description="Work out fool", color=0x61ff33)
-    for word in message:
-        embedVar.add_field(name=word, value=word, inline=False)
-    await client.send(embed=embedVar)
 
 
 # Information on the last match
@@ -148,49 +128,7 @@ async def create(client, *message):
         numTimes = round(times[r])
         embedVar.add_field(name=exName, value= "Times: " + str((numTimes)))
 
-    # await firstGameStats(client, *message)
-    # embedVar = discord.Embed(
-    #     title="Stats", description="Last Game's Stats", color=0x61ff33)
-    # embedVar.add_field(name="Summoner ID", value=x[0]['userName'], inline=False)
-    # embedVar.add_field(name="Champion", value=x[0]['Champion'], inline=False)
-    # embedVar.add_field(name="Kills", value=x[0]['Kills'], inline=False)
-    # embedVar.add_field(name="Deaths", value=x[0]['Deaths'], inline=False)
-    # embedVar.add_field(name="Assists", value=x[0]['Assists'], inline=False)
-    # embedVar.add_field(name="Enemy Team Kills", value=x[0]['eTeamKills'], inline=False)
-    # embedVar.add_field(name="Role", value=x[0]['Role'], inline=False)
-    # embedVar.add_field(name="Game Length (minutes)", value=x[0]['gameLength'], inline=False)
-    # embedVar.add_field(name="CS/M", value=x[0]['CSM'], inline=False)
-    # embedVar.add_field(name="Win?", value=x[0]['Win'], inline=False)
-    # embedVar.add_field(name="Turrets Destroyed", value=x[0]['turretsDestroyed'], inline=False)
-    # embedVar.add_field(name="First Baron?", value=x[0]['firstBaron'], inline=False)
-    # embedVar.add_field(name="First Dragon?", value=x[0]['firstDragon'], inline=False)
-    #await client.send(buildMatchList(message[0], message[1]))    # Sends the first match table to the client
     await client.send(embed=embedVar)
-
-
-# Champ Lookup command
-@client.command()
-async def champLookup(client, *message):
-    champName = champ_dict[message[0]]
-    print(champ_dict)
-    embedVar = discord.Embed(
-        title="Champion Lookup", description="Returns the Champion based off of ID", color=0x61ff33)
-    embedVar.add_field(name="Champion Name", value=champName, inline=False)
-    embedVar.add_field(name="Champion ID", value=message, inline=False)
-    await client.send(embed=embedVar)
-
-
-# DM the author to give help
-@client.command()
-async def dm(ctx):
-    await ctx.author.send("Hello")
-
-
-# Test command
-@client.command()
-async def testBML(client, *message):
-    await client.send(buildMatchList('sorairo', 'na1')[1])
-
 
 def generateExerciseTimes(x):
 
