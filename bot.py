@@ -51,18 +51,23 @@ async def suggest(client, *message):
 # Information on the last match
 @client.command()
 async def work(client, *message):
-    if (len(message) < 2):
-        if (len(message) == 1):
-            regionName = ['br1', 'eun1', 'euw1', 'la1', 'la2',
-                          'na1', 'oce', 'oc1', 'ru1', 'tr1', 'jp1', 'kr', 'pbe']
-            if message[0].lower() in regionName:
-                await client.send("Include a summoner name.")
-            else:
-                await client.send("Include a region.")
-        else:
-            await client.send("Enter one region and one summoner name.")
-        return
     await client.send("Processing info :thinking:...")
+    if (len(message) < 2):
+        embedVar = discord.Embed(
+            title="ERROR!", description="The command syntax is !work <region> <summoner name>",
+            color=0xFF0000)
+        embedVar.add_field(name="Regions", value= "br1, eun1, euw1, la1, la2,na1, oce, oc1, ru1, tr1, jp1, kr, pbe")
+
+        await client.send(embed=embedVar)
+    regions =['br1', 'eun1', 'euw1', 'la1', 'la2','na1', 'oce', 'oc1', 'ru1', 'tr1', 'jp1', 'kr', 'pbe']
+    if message[1].lower() not in regions:
+        embedVar = discord.Embed(
+            title="ERROR!", description="The region you have specified is not valid!",
+            color=0xFF0000)
+        embedVar.add_field(name="Regions", value="br1, eun1, euw1, la1, la2,na1, oce, oc1, ru1, tr1, jp1, kr, pbe")
+
+        await client.send(embed=embedVar)
+
     userName = ""
     for i in range(1, len(message)-1):
         userName = userName + message[i] + " "
