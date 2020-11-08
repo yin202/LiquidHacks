@@ -10,15 +10,14 @@ import asyncio
 TOKEN = 'Nzc0NDY1NDUwMzM5MDc0MDc5.X6YLKA.CEd15xcXw7BrMxd0Ij6vX1MOIKE'
 client = commands.Bot(command_prefix = "!lw")
 
-@client.event
-async def change_presence():
-    game = discord.Game("Type !lwh for help")
-    await client.change_presence(status=discord.Status.idle, activity=game)
-# Determines if bot is active or not
 
+# Determines if bot is active or not
 @client.event
 async def on_ready():
+    game = discord.Game("Type !lwh for help")
+    await client.change_presence(status=discord.Status.idle, activity=game)
     print('LoL Workout Bot is ready!')
+
 
 @client.command()
 async def info(client, *message):
