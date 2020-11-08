@@ -54,6 +54,21 @@ async def h(client, *message):
                        inline=False)
     await client.send(embed=embedVar)
 
+# help command
+
+
+@client.command()
+async def calc(client, *message):
+    embedVar = discord.Embed(title="LoL Workout - Calculations", 
+        description="How the number of repetitions is calculated.", color=0x734f96)
+    embedVar.add_field(name="Initial Stats",
+                      value="Winning, First Dragon, First Baron",
+                      inline=False)
+    embedVar.add_field(name = "What changes the State",
+                      value = "Deaths, Assists, CSM, Turrets, Dragons, Barons",
+                      inline = False)
+    await client.send(embed=embedVar)
+
 
 #Champion List Loop (To help with runtime, don't move this pls yet)
 lol_watcher = LolWatcher('RGAPI-85ee1dfc-28d3-4608-8f55-0c07879d7fa3')
