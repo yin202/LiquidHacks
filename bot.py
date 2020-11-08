@@ -70,7 +70,7 @@ async def calc(client, *message):
 
 
 #Champion List Loop (To help with runtime, don't move this pls yet)
-lol_watcher = LolWatcher('RGAPI-16824ea5-e86b-4ce9-8dd3-bc61f3587f51')
+lol_watcher = LolWatcher('RGAPI-85ee1dfc-28d3-4608-8f55-0c07879d7fa3')
 latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
 static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
 champ_dict = {}
@@ -314,6 +314,5 @@ def getStats(match, userName, participantId, teamId, champ):
                 "CSM": csm, "Win": userWon, "turretsDestroyed": turretsDestroyed, "firstBaron": firstBaron,
                 "firstDragon": firstDragon}
     return statDesc
-
 
 client.run(TOKEN)
