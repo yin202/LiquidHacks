@@ -91,7 +91,7 @@ async def work(client, *message):
     kdaString = str(x[0]['Kills']) + "/" + str(x[0]['Deaths']) + "/" + str(x[0]['Assists'])
     embedVar.add_field(name="K/D/A", value=kdaString, inline=False)
     for i in range(0, 7):
-        exName = "Exercise: " + types[i]
+        exName = types[i]
         r = random.randrange(0, 7)
         numTimes = round(times[r])
         embedVar.add_field(name=exName, value= "Times: " + str((numTimes)))
