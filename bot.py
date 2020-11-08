@@ -50,8 +50,7 @@ async def suggest(client, *message):
 
 # Information on the last match
 @client.command()
-async def work(client, *message):
-    await client.send("Processing info :thinking:...")
+async def LoLwork(client, *message):
     if (len(message) < 2):
         embedVar = discord.Embed(
             title="ERROR!", description="The command syntax is !work <region> <summoner name>",
@@ -70,6 +69,7 @@ async def work(client, *message):
         await client.send(embed=embedVar)
         return
 
+    await client.send("Processing info :thinking:...")
     userName = ""
     for i in range(1, len(message)-1):
         userName = userName + message[i] + " "
