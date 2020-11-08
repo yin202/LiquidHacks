@@ -59,14 +59,16 @@ async def work(client, *message):
         embedVar.add_field(name="Regions", value= "br1, eun1, euw1, la1, la2,na1, oce, oc1, ru1, tr1, jp1, kr, pbe")
 
         await client.send(embed=embedVar)
+        return
     regions = ['br1', 'eun1', 'euw1', 'la1', 'la2', 'na1', 'oce', 'oc1', 'ru1', 'tr1', 'jp1', 'kr', 'pbe']
-    if message[1].lower() not in regions:
+    if message[0].lower() not in regions:
         embedVar = discord.Embed(
             title="ERROR!", description="The region you have specified is not valid!",
             color=0xFF0000)
         embedVar.add_field(name="Regions", value="br1, eun1, euw1, la1, la2, na1, oce, oc1, ru1, tr1, jp1, kr, pbe")
 
         await client.send(embed=embedVar)
+        return
 
     userName = ""
     for i in range(1, len(message)-1):
