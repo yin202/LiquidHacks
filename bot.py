@@ -3,19 +3,57 @@ from discord.ext import commands
 from riotwatcher import LolWatcher, ApiError
 import pandas as pd
 import random
+import asyncio
 
 
 # Token from Discord Developer Website
 TOKEN = 'Nzc0NDY1NDUwMzM5MDc0MDc5.X6YLKA.CEd15xcXw7BrMxd0Ij6vX1MOIKE'
-client = commands.Bot(command_prefix = "!")
+client = commands.Bot(command_prefix = "!lw")
+
+@client.event
+async def change_presence():
+    game = discord.Game("Type !lwh for help")
+    await client.change_presence(status=discord.Status.idle, activity=game)
 # Determines if bot is active or not
+
 @client.event
 async def on_ready():
     print('LoL Workout Bot is ready!')
 
+@client.command()
+async def info(client, *message):
+    embedVar = discord.Embed(
+        title="LoL Workout - Information", description="This bot will create a "
+                                             "personalized workout routine "
+                                             "based on your previous game performance in League of Legends. "
+                                             "If you perform well in your game, the bot will give you a easier workout. If you don't, well then...."
+                                             "you might think twice about feeding"
+                                             " your laner next time!", color=0x734f96 )
+    embedVar.add_field(name="Kevin", value="Sophomore @ Purdue University" +"\n" + "Kevin is Double majoring in Data Science and Statistics", inline=False)
+    embedVar.add_field(name="James", value="Sophomore @ Columbia University" +"\n" + "James is Majoring in Computer/Electrical Engineering", inline=False)
+    embedVar.add_field(name="Joseph", value="Sophomore @ Purdue University" +"\n" + "Joseph is Majoring in Computer Science", inline=False)
+    embedVar.add_field(name="Ahmed", value="Sophomore @ Purdue University" +"\n" + "Ahmed is Majoring in Computer Engineering", inline=False)
+    await client.send(embed=embedVar)
 
-# List of exercises
 
+# help command
+@client.command()
+async def h(client, *message):
+    embedVar = discord.Embed(
+        title="LoL Workout - Help", description="Commands", color=0x734f96)
+    embedVar.add_field(name="!lwcreate <region> <summoner name>",
+                       value="Creates an exercise routine",
+                       inline=False)
+    embedVar.add_field(name="!lwinfo",
+                       value="Displays information about the bot and it's creators",
+                       inline=False)
+    embedVar.add_field(name="!lwcalc",
+                       value="Displays formula and weighting used to generate workout",
+                       inline=False)
+    embedVar.add_field(name="!lwhelp",
+                       value="Displays this page",
+                       inline=False)
+    await client.send(embed=embedVar)
 
 
 #Champion List Loop (To help with runtime, don't move this pls yet)
@@ -50,7 +88,7 @@ async def suggest(client, *message):
 
 # Information on the last match
 @client.command()
-async def LoLwork(client, *message):
+async def create(client, *message):
     if (len(message) < 2):
         embedVar = discord.Embed(
             title="ERROR!", description="The command syntax is !work <region> <summoner name>",
