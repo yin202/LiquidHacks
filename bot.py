@@ -8,13 +8,13 @@ import asyncio
 
 # Token from Discord Developer Website
 TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-client = commands.Bot(command_prefix = "!lw")
+client = commands.Bot(command_prefix = "!bb")
 
 
 # Determines if bot is active or not
 @client.event
 async def on_ready():
-    game = discord.Game("Type !lwh for help")
+    game = discord.Game("Type !bb for help")
     await client.change_presence(status=discord.Status.online, activity=game)
     print('LoL Workout Bot is ready!')
 
@@ -40,16 +40,16 @@ async def info(client, *message):
 async def h(client, *message):
     embedVar = discord.Embed(
         title="LoL Workout - Help", description="Commands", color=0x734f96)
-    embedVar.add_field(name="!lwcreate <region> <summoner name>",
+    embedVar.add_field(name="!bbcreate <region> <summoner name>",
                        value="Creates an exercise routine",
                        inline=False)
-    embedVar.add_field(name="!lwinfo",
+    embedVar.add_field(name="!bbinfo",
                        value="Displays information about the bot and it's creators",
                        inline=False)
-    embedVar.add_field(name="!lwcalc",
+    embedVar.add_field(name="!bbcalc",
                        value="Displays formula and weighting used to generate workout",
                        inline=False)
-    embedVar.add_field(name="!lwhelp",
+    embedVar.add_field(name="!bbhelp",
                        value="Displays this page",
                        inline=False)
     await client.send(embed=embedVar)
