@@ -21,6 +21,18 @@ listExercises = ["squats", "lunges", "high_knees", "plank_rotations", "plank_hol
         "box_jumps", "wrist_workout"]
 
 
+#Champion List Loop (To help with runtime, don't move this pls yet)
+lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
+latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
+static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
+champ_dict = {}
+for key in static_champ_list['data']:
+    row = static_champ_list['data'][key]
+    champ_dict[row['key']] = row['id']
+
+userStats = []
+
+
 # Command to display simple BASED text box
 @client.command()
 async def based(client, *message):
@@ -62,19 +74,33 @@ async def work(client, *message):
 # Champ Lookup command
 @client.command()
 async def champLookup(client, *message):
-    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-    latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
-    static_champ_list = lol_watcher.data_dragon.champions(latest, False, 'en_US')
-    champ_dict = {}
-    for key in static_champ_list['data']:
-        row = static_champ_list['data'][key]
-        champ_dict[row['key']] = row['id']
     champName = champ_dict[message[0]]
     print(champ_dict)
     embedVar = discord.Embed(
         title="Champion Lookup", description="Returns the Champion based off of ID", color=0x61ff33)
     embedVar.add_field(name="Champion Name", value=champName, inline=False)
     embedVar.add_field(name="Champion ID", value=message, inline=False)
+    await client.send(embed=embedVar)
+
+
+# get stats for first game
+@client.command()
+async def firstGameStats(client, *message):
+    embedVar = discord.Embed(
+        title="Stats", description="Last Game's Stats", color=0x61ff33)
+    embedVar.add_field(name="Summoner ID", value=userStats['userName'], inline=False)
+    embedVar.add_field(name="Champion", value=userStats['Champion'], inline=False)
+    embedVar.add_field(name="Kills", value=userStats['Kills'], inline=False)
+    embedVar.add_field(name="Deaths", value=userStats['Deaths'], inline=False)
+    embedVar.add_field(name="Assists", value=userStats['Assists'], inline=False)
+    embedVar.add_field(name="Enemy Team Kills", value=userStats['eTeamKills'], inline=False)
+    embedVar.add_field(name="Role", value=userStats['role'], inline=False)
+    embedVar.add_field(name="Game Length (minutes)", value=userStats['gameLength'], inline=False)
+    embedVar.add_field(name="CS/M", value=userStats['CSM'], inline=False)
+    embedVar.add_field(name="Win?", value=userStats['Win'], inline=False)
+    embedVar.add_field(name="Turrets Destroyed", value=userStats['turretsDestroyed'], inline=False)
+    embedVar.add_field(name="First Baron?", value=userStats['firstBaron'], inline=False)
+    embedVar.add_field(name="First Dragon?", value=userStats['firstDragon'], inline=False)
     await client.send(embed=embedVar)
 
 
@@ -96,21 +122,11 @@ async def testBML(client, *message):
 #
 ###################################################################################################
 def champLookupInternal(id):
-    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-    latest = lol_watcher.data_dragon.versions_for_region('na1')['n']['champion']
-    static_champ_list = lol_watcher.data_dragon.champions(
-        latest, False, 'en_US')
-    champ_dict = {}
-    for key in static_champ_list['data']:
-        row = static_champ_list['data'][key]
-        champ_dict[row['key']] = row['id']
     champName = champ_dict[str(id)]
     return champName
 
 
 def buildMatchList(user_region, username):
-    lol_watcher = LolWatcher('RGAPI-d121ef6b-adab-4d13-8831-a10fb9ae71fe')
-
     user = lol_watcher.summoner.by_name(user_region, username)
 
     match_list = lol_watcher.match.matchlist_by_account(
@@ -118,14 +134,22 @@ def buildMatchList(user_region, username):
 
     listOfMatches = []
     listOfMatchesDict = []
+    userMatchIds = []
 
     for i in range(0, 7):
         tempMatch = match_list['matches'][i]
+        userMatchIds.append(tempMatch['gameId'])
         match_details = lol_watcher.match.by_id(
             user_region, tempMatch['gameId'])
         participants = []
         for row in match_details['participants']:
             participants_row = {}
+            findUser = getUsername(match_details['participantIdentities'], row['participantId'])
+            participants_row['userName'] = findUser
+            if findUser.lower() == username.lower():
+                userStats.append(getStats(match_details, findUser, row['participantId'], row['teamId'],
+                                          champLookupInternal(row['championId'])))
+            participants_row['participantId'] = row['participantId']
             participants_row['champion'] = row['championId']
             participants_row['spell1'] = row['spell1Id']
             participants_row['spell2'] = row['spell2Id']
@@ -142,12 +166,96 @@ def buildMatchList(user_region, username):
             participants_row['championName'] = champLookupInternal(
                 row['championId'])
             participants.append(participants_row)
+            # print(match_details['participantIdentities'])
         df = pd.DataFrame(participants)
         listOfMatchesDict.append(participants)
         listOfMatches.append(df)
-
     return listOfMatches
 
+
+def getUsername(participantIdentities, participantId):
+    for people in participantIdentities:
+        if participantId == people['participantId']:
+            return (people['player']['summonerName'])
+    # print("participant id:")
+    # print(participantId)
+
+
+def getStats(match, userName, participantId, teamId, champ):
+    statDesc = {}
+    # Role
+    role = match['participants'][participantId - 1]['timeline']['role']
+    print(role)
+    # Enemy Team kills:
+    enemyKills = 0
+    if (participantId <= 5):
+        for x in match['participants']:
+            if x['teamId'] == 200:
+                enemyKills = x['stats']['kills'] + enemyKills
+    else:
+        for x in match['participants']:
+            if x['teamId'] == 100:
+                enemyKills = x['stats']['kills'] + enemyKills
+
+    # Player Deaths
+    deaths = match['participants'][participantId - 1]['stats']['deaths']
+
+    # Player Kills
+    kills = match['participants'][participantId - 1]['stats']['kills']
+
+    # Player Assists
+    assists = match['participants'][participantId - 1]['stats']['assists']
+
+    # Game Duration (seconds)
+    gameDuration = match['gameDuration'] / 60
+
+    # Player CSM
+    csm = (match['participants'][participantId - 1]['stats']['totalMinionsKilled'] +
+           match['participants'][participantId - 1]['stats']['neutralMinionsKilled']) / gameDuration
+
+    print(csm)
+
+    # Win/Loss
+    if (100 == teamId):
+        userWon = match['teams'][0]["win"]
+        if userWon == 'Fail':
+            userWon = False
+        else:
+            userWon = True
+    else:
+        userWon = match['teams'][1]["win"]
+        if userWon == 'Fail':
+            userWon = False
+        else:
+            userWon = True
+    print(userWon)
+
+    # Turrets that Player Destroyed
+    turretsDestroyed = match['participants'][participantId - 1]['stats']['turretKills']
+    print(turretsDestroyed)
+
+    # First Baron Status
+    if (100 == teamId):
+        firstBaron = match['teams'][0]["firstBaron"]
+    else:
+        firstBaron = match['teams'][1]["firstBaron"]
+
+    # First Dragon Status
+    if (100 == teamId):
+        firstDragon = match['teams'][0]["firstDragon"]
+    else:
+        firstDragon = match['teams'][1]["firstDragon"]
+
+    statDesc = {"userName": userName, "Champion": champ,
+                "Kills": kills, "Deaths": deaths, "Assists": assists, "eTeamKills": enemyKills, "Role": role,
+                "gameLength": gameDuration,
+                "CSM": csm, "Win": userWon, "turretsDestroyed": turretsDestroyed, "firstBaron": firstBaron,
+                "firstDragon": firstDragon}
+    return statDesc
+
+
+def getStatsAsList():
+    return userStats
 
 
 client.run(TOKEN)
